@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service;
 
 import com.pinyougou.pojo.TbBrand;
+import dto.PageResult;
 
 import java.util.List;
 
@@ -18,4 +19,13 @@ public interface BrandService {
      * @return
      */
     public List<TbBrand> findAll();
+
+    /**
+     * 查询分页对象
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageResult findPage(int pageNum, int pageSize);
 }
