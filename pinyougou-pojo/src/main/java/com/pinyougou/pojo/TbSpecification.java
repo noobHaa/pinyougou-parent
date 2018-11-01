@@ -1,6 +1,7 @@
 package com.pinyougou.pojo;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class TbSpecification implements Serializable {
     private Long id;

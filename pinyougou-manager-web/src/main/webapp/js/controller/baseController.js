@@ -1,4 +1,4 @@
-app.controller("baseController", function ($scope, $http, brandService) {
+app.controller("baseController", function ($scope) {
     //重新加载列表 数据
     $scope.reloadList = function () {
         //切换页码
@@ -27,7 +27,7 @@ app.controller("baseController", function ($scope, $http, brandService) {
             $scope.selectIds.splice($scope.selectIds.indexOf(id), 1);
         }
     };
-
+    $scope.list = [];
     $scope.selectAll = function ($event) {
         if ($event.target.checked) {
             for (var i = 0; i < $scope.list.length; i++) {

@@ -12,23 +12,22 @@ import java.util.List;
 public class PageResult implements Serializable {
 
     //总记录
-    private long totalNum;
+    private long total;
 
     //当前页条数
     private List rows;
 
-    public PageResult(long totalNum, List rows) {
-        this.totalNum = totalNum;
+    public PageResult(long total, List rows) {
+        this.total = total;
         this.rows = rows;
     }
 
-    public long getTotalNum() {
-
-        return totalNum;
+    public long getTotal() {
+        return total;
     }
 
-    public void setTotalNum(long totalNum) {
-        this.totalNum = totalNum;
+    public void setTotal(long total) {
+        this.total = total;
     }
 
     public List getRows() {

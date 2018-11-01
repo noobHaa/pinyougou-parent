@@ -6,7 +6,7 @@ app.controller("brandController", function ($scope, $http,$controller, brandServ
         brandService.findPage(page, rows).success(
             function (response) {
                 $scope.list = response.rows;
-                $scope.paginationConf.totalItems = response.totalNum;//更新总记录数
+                $scope.paginationConf.totalItems = response.total;//更新总记录数
             }
         );
     };
@@ -14,8 +14,9 @@ app.controller("brandController", function ($scope, $http,$controller, brandServ
     $scope.search = function (page, rows) {
         brandService.search(page, rows, $scope.searchEntity).success(
             function (response) {
+                debugger;
                 $scope.list = response.rows;
-                $scope.paginationConf.totalItems = response.totalNum;//更新总记录数
+                $scope.paginationConf.totalItems = response.total;//更新总记录数
             }
         );
     };

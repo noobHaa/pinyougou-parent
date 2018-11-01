@@ -118,6 +118,7 @@ public class BrandController {
      */
     @RequestMapping("/search")
     public PageResult findPage(@RequestBody TbBrand brand, int num, int size) {
+        brandService.findPage(brand, num, size);
         return brandService.findPage(brand, num, size);
     }
 }
