@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author ll
@@ -75,5 +76,10 @@ public class BrandServiceImpl implements BrandService {
         PageHelper.startPage(pageNum, pageSize);
         Page page = (Page) brandMapper.selectByExample(tbBrandExample);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public List<Map> findBrandList() {
+        return brandMapper.findBrandList();
     }
 }

@@ -66,15 +66,21 @@ app.controller('specificationController', function ($scope, $controller, specifi
 
     //批量删除
     $scope.dele = function () {
-        //获取选中的复选框
-        specificationService.dele($scope.selectIds).success(
-            function (response) {
-                if (response.success) {
-                    $scope.reloadList();//刷新列表
-                    $scope.selectIds = [];
+        if ($scope.selectIds.length <= 0) {
+            alert("请至少选择一个进行删除");
+            return;
+        }
+        if (confirm("确定删除吗？")) {
+            //获取选中的复选框
+            specificationService.dele($scope.selectIds).success(
+                function (response) {
+                    if (response.success) {
+                        $scope.reloadList();//刷新列表
+                        $scope.selectIds = [];
+                    }
                 }
-            }
-        );
+            );
+        }
     }
 
     $scope.searchEntity = {};//定义搜索对象

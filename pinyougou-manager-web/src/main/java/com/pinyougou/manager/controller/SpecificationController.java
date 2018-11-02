@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vo.Specification;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * controller
@@ -81,7 +82,8 @@ public class SpecificationController {
 
     /**
      * 获取实体
-     *++
+     * ++
+     *
      * @param id
      * @return
      */
@@ -117,8 +119,16 @@ public class SpecificationController {
      */
     @RequestMapping("/search")
     public PageResult search(@RequestBody TbSpecification specification, int page, int rows) {
-        specificationService.findPage(specification, page, rows);
         return specificationService.findPage(specification, page, rows);
     }
 
+    /**
+     * 返回所有的规格信息
+     *
+     * @return
+     */
+    @RequestMapping("/findSpecificationList")
+    public List<Map> findSpecificationList() {
+        return specificationService.findSpecificationList();
+    }
 }

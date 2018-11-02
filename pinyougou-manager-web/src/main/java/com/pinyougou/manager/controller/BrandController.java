@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 品牌controller
@@ -118,7 +119,16 @@ public class BrandController {
      */
     @RequestMapping("/search")
     public PageResult findPage(@RequestBody TbBrand brand, int num, int size) {
-        brandService.findPage(brand, num, size);
         return brandService.findPage(brand, num, size);
+    }
+
+    /**
+     * 返回所有的品牌信息
+     *
+     * @return
+     */
+    @RequestMapping("/findBrandList")
+    public List<Map> findBrandList() {
+        return brandService.findBrandList();
     }
 }

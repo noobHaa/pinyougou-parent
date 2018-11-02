@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.pojo.TbSpecification;
 import dto.PageResult;
@@ -65,5 +66,12 @@ public interface SpecificationService {
      * @return
      */
     public PageResult findPage(TbSpecification specification, int pageNum, int pageSize);
+
+    /**
+     * 返回所有的规格信息
+     *
+     * @return
+     */
+    List<Map> findSpecificationList();
 
 }

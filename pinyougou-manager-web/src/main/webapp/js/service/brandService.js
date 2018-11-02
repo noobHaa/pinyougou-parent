@@ -17,4 +17,8 @@ app.service("brandService", function ($http) {
     this.delete = function (selectIds) {
         return $http.get("../brand/delete.do?ids=" + selectIds);
     };
+    //返回所有品牌信息
+    this.selectOptionList = function () {
+        return $http.get('../brand/findBrandList.do');
+    };
 });
