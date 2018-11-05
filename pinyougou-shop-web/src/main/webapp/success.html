@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>成功</title>
+    <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
+    <link rel="stylesheet" type="text/css" href="css/pages-register.css"/>
+
+    <script src="plugins/angularjs/angular.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery.easing/jquery.easing.min.js"></script>
+    <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery-placeholder/jquery.placeholder.min.js"></script>
+    <script src="js/base.js"></script>
+    <script src="js/controller/baseController.js"></script>
+    <script src="js/controller/successController.js"></script>
+</head>
+<body ng-app="pinyougou" ng-controller="successController" ng-init="redirectLog()">
+<h5>
+    注册成功，<span>{{seconds}}</span>秒后跳转到登录页......
+</h5>
+</body>
+</html>
