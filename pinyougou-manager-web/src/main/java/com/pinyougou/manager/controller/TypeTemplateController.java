@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * controller
@@ -119,4 +120,13 @@ public class TypeTemplateController {
         return typeTemplateService.findPage(typeTemplate, page, rows);
     }
 
+    /**
+     * 查询所有的模板信息
+     *
+     * @return
+     */
+    @RequestMapping("/findTemplateList")
+    public List<Map> findTemplateList() {
+        return typeTemplateService.findTemplateList();
+    }
 }

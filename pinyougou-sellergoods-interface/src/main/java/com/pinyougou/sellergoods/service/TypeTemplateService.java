@@ -4,6 +4,7 @@ import com.pinyougou.pojo.TbTypeTemplate;
 import dto.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 服务层接口
@@ -64,5 +65,12 @@ public interface TypeTemplateService {
      * @return
      */
     public PageResult findPage(TbTypeTemplate typeTemplate, int pageNum, int pageSize);
+
+    /**
+     * 查询所有的模板信息
+     *
+     * @return
+     */
+    public List<Map> findTemplateList();
 
 }
