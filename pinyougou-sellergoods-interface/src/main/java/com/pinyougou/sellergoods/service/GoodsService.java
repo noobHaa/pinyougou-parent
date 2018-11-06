@@ -2,6 +2,7 @@ package com.pinyougou.sellergoods.service;
 
 import com.pinyougou.pojo.TbGoods;
 import dto.PageResult;
+import vo.Goods;
 
 import java.util.List;
 
@@ -64,5 +65,17 @@ public interface GoodsService {
      * @return
      */
     public PageResult findPage(TbGoods goods, int pageNum, int pageSize);
+
+    /**
+     * 新增商品
+     *
+     * @param goods
+     */
+    public void add(Goods goods);
+
+    /**
+     * 修改商品信息
+     */
+    public void update(Goods goods);
 
 }

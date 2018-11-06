@@ -8,6 +8,7 @@ import dto.Result;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vo.Goods;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/add")
-    public Result add(@RequestBody TbGoods goods) {
+    public Result add(@RequestBody Goods goods) {
         try {
             goodsService.add(goods);
             return new Result(true, "增加成功");
@@ -68,7 +69,7 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/update")
-    public Result update(@RequestBody TbGoods goods) {
+    public Result update(@RequestBody Goods goods) {
         try {
             goodsService.update(goods);
             return new Result(true, "修改成功");
