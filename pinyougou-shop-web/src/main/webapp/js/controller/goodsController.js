@@ -1,5 +1,5 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller, goodsService) {
+app.controller('goodsController', function ($scope, $controller, goodsService, uploadService, itemCatService, typeTemplateService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -52,6 +52,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
     }
     //保存
     $scope.add = function () {
+        debugger;
         $scope.entity.tbGoodsDesc.introduction = editor.html();
         goodsService.add($scope.entity).success(
             function (response) {
@@ -75,6 +76,8 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
                 if (response.success) {
                     $scope.reloadList();//刷新列表
                     $scope.selectIds = [];
+                } else {
+                    alert(response.message);
                 }
             }
         );
@@ -92,4 +95,71 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
         );
     }
 
-});	
+    $scope.uploadFile = function () {
+        uploadService.uploadFile().success(
+            function (response) {
+                if (response.success) {
+                    $scope.image_entity.url = response.message;
+                } else {
+                    alert(response.message);
+                }
+            }
+        );
+    }
+    $scope.entity = {goods: {}, tbGoodsDesc: {itemImages: [],customAttributeItems:[]}};//定义页面实体结构
+    //保存图片信息
+    $scope.add_image_entity = function () {
+        debugger;
+        $scope.entity.tbGoodsDesc.itemImages.push($scope.image_entity);
+    }
+
+    //删除图片
+    $scope.remTab = function ($index) {
+        $scope.entity.tbGoodsDesc.itemImages.splice($index, 1);
+    }
+
+    //一级下拉列表
+    $scope.selectItemCat1List = function () {
+        itemCatService.findByParentId(0).success(
+            function (response) {
+                $scope.itemCat1List = response;
+            });
+    };
+    //二级下拉列表
+    $scope.$watch('entity.tbGoods.category1Id', function (newValue, oldValue) {
+        itemCatService.findByParentId(newValue).success(
+            function (response) {
+                $scope.itemCat2List = response;
+            });
+    });
+
+    //三级下拉列表
+    $scope.$watch('entity.tbGoods.category2Id', function (newValue, oldValue) {
+        itemCatService.findByParentId(newValue).success(
+            function (response) {
+                $scope.itemCat3List = response;
+            });
+    });
+
+    //获取模板id
+    $scope.$watch('entity.tbGoods.category3Id', function (newValue, oldValue) {
+        itemCatService.findOne(newValue).success(
+            function (response) {
+                $scope.entity.tbGoods.typeTemplateId = JSON.parse(response.typeId).id;
+            }
+        );
+    });
+
+    //获取品牌
+    $scope.$watch('entity.tbGoods.typeTemplateId', function (newValue, oldValue) {
+        typeTemplateService.findOne(newValue).success(
+            function (response) {
+                $scope.typeTemplate = response;//获取类型模板
+                $scope.typeTemplate.brandIds = JSON.parse(response.brandIds);
+
+                //获取扩展属性
+                $scope.entity.tbGoodsDesc.customAttributeItems = JSON.parse(response.customAttributeItems);
+            }
+        )
+    });
+});
