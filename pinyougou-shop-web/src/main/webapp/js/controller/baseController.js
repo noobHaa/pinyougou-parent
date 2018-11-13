@@ -57,4 +57,14 @@ app.controller("baseController", function ($scope) {
         }
         return false;
     };
+
+    //根据key得到Object
+    $scope.searchObjectByKey = function (list, key, value) {
+        for (var i = 0; i < list.length; i++) {
+            if (list[i][value] == key) {
+                return list[i];
+            }
+        }
+        return null;
+    }
 });

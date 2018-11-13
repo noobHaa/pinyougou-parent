@@ -1,9 +1,13 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
 import com.pinyougou.mapper.TbTypeTemplateMapper;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import com.pinyougou.pojo.TbTypeTemplate;
 import com.pinyougou.pojo.TbTypeTemplateExample;
 import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
@@ -24,6 +28,8 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
     @Autowired
     private TbTypeTemplateMapper typeTemplateMapper;
+    @Autowired
+    private TbSpecificationOptionMapper optionMapper;
 
     /**
      * 查询全部
@@ -112,6 +118,20 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     @Override
     public List<Map> findTemplateList() {
         return typeTemplateMapper.findTemplateList();
+    }
+
+    @Override
+    public List<Map> findSpecList(Long id) {
+        TbTypeTemplate template = typeTemplateMapper.selectByPrimaryKey(id);
+        List<Map> maps = JSON.parseArray(template.getSpecIds(), Map.class);
+        for (Map map : maps) {
+            TbSpecificationOptionExample optionExample = new TbSpecificationOptionExample();
+            optionExample.createCriteria().andSpecIdEqualTo(new Long((Integer)map.get("id")));
+            //根据规格id查询出规格选项
+            List<TbSpecificationOption> specificationOptions = optionMapper.selectByExample(optionExample);
+            map.put("options", specificationOptions);
+        }
+        return maps;
     }
 
 }

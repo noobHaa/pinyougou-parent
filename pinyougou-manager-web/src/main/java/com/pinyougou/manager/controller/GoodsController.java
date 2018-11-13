@@ -8,6 +8,7 @@ import dto.Result;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vo.Goods;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/findOne")
-    public TbGoods findOne(Long id) {
+    public Goods findOne(Long id) {
         return goodsService.findOne(id);
     }
 
