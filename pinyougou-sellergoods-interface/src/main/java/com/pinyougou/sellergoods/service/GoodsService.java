@@ -78,4 +78,19 @@ public interface GoodsService {
      */
     public void update(Goods goods);
 
+    /**
+     * 审核商品
+     *
+     * @param ids
+     * @param auditStatus
+     */
+    public void updateStatus(Long[] ids, String auditStatus);
+    /**
+     * 上下架
+     *
+     * @param ids
+     * @param auditStatus
+     */
+    public void updateMarketStatus(Long[] ids, String isMarketable);
+
 }

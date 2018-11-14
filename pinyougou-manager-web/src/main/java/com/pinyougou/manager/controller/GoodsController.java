@@ -120,4 +120,21 @@ public class GoodsController {
         return goodsService.findPage(goods, page, rows);
     }
 
+    /**
+     * 修改商品的审核状态
+     *
+     * @param ids
+     * @param status
+     * @return
+     */
+    @RequestMapping("/updateStatus")
+    public Result updateStatus(Long[] ids, String status) {
+        try {
+            goodsService.updateStatus(ids, status);
+            return new Result(true, "审核成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "审核失败");
+        }
+    }
 }

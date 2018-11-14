@@ -13,6 +13,7 @@ import com.pinyougou.pojo.TbSpecificationOptionExample;
 import com.pinyougou.sellergoods.service.SpecificationService;
 import dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import vo.Specification;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Map;
  * @author Administrator
  */
 @Service
+@Transactional
 public class SpecificationServiceImpl implements SpecificationService {
 
     @Autowired

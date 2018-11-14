@@ -136,4 +136,21 @@ public class GoodsController {
         return goodsService.findPage(goods, page, rows);
     }
 
+    /**
+     * 上下架
+     *
+     * @param ids
+     * @param status
+     * @return
+     */
+    @RequestMapping("/updateStatus")
+    public Result updateStatus(Long[] ids, String status) {
+        try {
+            goodsService.updateMarketStatus(ids, status);
+            return new Result(true, "修改成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "修改失败");
+        }
+    }
 }

@@ -241,4 +241,19 @@ app.controller('goodsController', function ($scope, $controller, $location, good
             }
         }
     }
+
+    $scope.marStatus = ['已上架', '已下架'];
+    //上下架
+    $scope.updateStatus=function (status) {
+        goodsService.updateStatus($scope.selectIds,status).success(
+            function (response) {
+                if (response.success) {
+                    $scope.reloadList();//刷新列表
+                    $scope.selectIds = [];
+                } else {
+                    alert(response.message);
+                }
+            }
+        )
+    }
 });

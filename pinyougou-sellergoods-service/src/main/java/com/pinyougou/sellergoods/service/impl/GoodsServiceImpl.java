@@ -10,6 +10,7 @@ import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.sellergoods.service.GoodsService;
 import dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import vo.Goods;
 
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author Administrator
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
@@ -103,6 +105,7 @@ public class GoodsServiceImpl implements GoodsService {
         TbGoodsExample example = new TbGoodsExample();
         Criteria criteria = example.createCriteria();
 
+        criteria.andIsDeleteIsNull();
         if (goods != null) {
             if (goods.getSellerId() != null && goods.getSellerId().length() > 0) {
                 //修改为精准查询
@@ -149,6 +152,7 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public void add(Goods goods) {
         goods.getTbGoods().setAuditStatus("0");
+        goods.getTbGoods().setIsMarketable("0");
         goodsMapper.insert(goods.getTbGoods());
 
         TbGoodsDesc tbGoodsDesc = goods.getTbGoodsDesc();
@@ -210,5 +214,23 @@ public class GoodsServiceImpl implements GoodsService {
         itemMapper.deleteByExample(tbItemExample);
         saveItemList(goods);
 
+    }
+
+    @Override
+    public void updateStatus(Long[] ids, String auditStatus) {
+        for (Long id : ids) {
+            TbGoods goods = goodsMapper.selectByPrimaryKey(id);
+            goods.setAuditStatus(auditStatus);
+            goodsMapper.updateByPrimaryKey(goods);
+        }
+    }
+
+    @Override
+    public void updateMarketStatus(Long[] ids, String isMarketable) {
+        for (Long id : ids) {
+            TbGoods goods = goodsMapper.selectByPrimaryKey(id);
+            goods.setIsMarketable(isMarketable);
+            goodsMapper.updateByPrimaryKey(goods);
+        }
     }
 }

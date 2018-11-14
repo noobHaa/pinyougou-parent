@@ -28,7 +28,6 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
         itemCatService.findOne(id).success(
             function (response) {
                 $scope.entity = response;
-                alert(response.typeId);
                 $scope.entity.typeId = JSON.parse(response.typeId);
             }
         );
