@@ -2,6 +2,7 @@ package com.pinyougou.sellergoods.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.pinyougou.mapper.TbSpecificationOptionMapper;
@@ -14,6 +15,8 @@ import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
 import dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,7 +27,7 @@ import java.util.Map;
  *
  * @author Administrator
  */
-@Service
+@Service(timeout = 5000)
 @Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
@@ -32,6 +35,8 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     private TbTypeTemplateMapper typeTemplateMapper;
     @Autowired
     private TbSpecificationOptionMapper optionMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询全部
@@ -114,7 +119,22 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         }
 
         Page<TbTypeTemplate> page = (Page<TbTypeTemplate>) typeTemplateMapper.selectByExample(example);
+        saveToRedis();
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 将规格和品牌放入缓存中
+     */
+    private void saveToRedis() {
+        List<TbTypeTemplate> templates = findAll();
+        for (TbTypeTemplate template : templates) {
+            List<Map> brandList = JSON.parseArray(template.getBrandIds(), Map.class);
+            redisTemplate.boundHashOps("brandList").put(template.getId(), brandList);
+            List<Map> specList = findSpecList(template.getId());
+            redisTemplate.boundHashOps("specList").put(template.getId(), specList);
+        }
+        System.out.println("规格和品牌放入缓存");
     }
 
     @Override
@@ -128,7 +148,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         List<Map> maps = JSON.parseArray(template.getSpecIds(), Map.class);
         for (Map map : maps) {
             TbSpecificationOptionExample optionExample = new TbSpecificationOptionExample();
-            optionExample.createCriteria().andSpecIdEqualTo(new Long((Integer)map.get("id")));
+            optionExample.createCriteria().andSpecIdEqualTo(new Long((Integer) map.get("id")));
             //根据规格id查询出规格选项
             List<TbSpecificationOption> specificationOptions = optionMapper.selectByExample(optionExample);
             map.put("options", specificationOptions);
