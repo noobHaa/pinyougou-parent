@@ -7,10 +7,10 @@ app.controller("searchController", function ($scope, searchService) {
             }
         )
     }
-    $scope.searchMap = {'keywords': '', 'category': '', 'brand': '', 'spec': {}};
+    $scope.searchMap = {'keywords': '', 'category': '', 'brand': '', 'spec': {},'price':''};
 
     $scope.addSearchItem = function (key, value) {
-        if (key == 'category' || key == 'brand') {
+        if (key == 'category' || key == 'brand'||key=='price') {
             $scope.searchMap[key]=value;
         }else {
             $scope.searchMap.spec[key]=value;
@@ -19,7 +19,7 @@ app.controller("searchController", function ($scope, searchService) {
     }
 
     $scope.removeSearchItem=function (key) {
-        if (key == 'category' || key == 'brand') {
+        if (key == 'category' || key == 'brand'||key=='price') {
             $scope.searchMap[key]='';
         }else {
           delete  $scope.searchMap.spec[key];
