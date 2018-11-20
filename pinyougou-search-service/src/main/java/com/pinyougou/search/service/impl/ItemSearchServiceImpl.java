@@ -34,11 +34,11 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         //2、分组查询 分类查询
         map.put("categoryList", searchCategoryList(searchMap));
         //3.查询品牌和规格列表
-        String categoryName=(String)searchMap.get("category");
-        if(!"".equals(categoryName)){//如果有分类名称
+        String categoryName = (String) searchMap.get("category");
+        if (!"".equals(categoryName)) {//如果有分类名称
             map.putAll(searchBrandAndSpecList(categoryName));
-        }else{//如果没有分类名称，按照第一个查询
-            if(searchCategoryList(searchMap).size()>0){
+        } else {//如果没有分类名称，按照第一个查询
+            if (searchCategoryList(searchMap).size() > 0) {
                 map.putAll(searchBrandAndSpecList(searchCategoryList(searchMap).get(0)));
             }
         }
@@ -64,23 +64,23 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         highlightQuery.setHighlightOptions(highlightOptions);
 
         //1.2分类
-        if (!"".equals(searchMap.get("category"))){
-            Criteria filterCriteria=new Criteria("item_category").is(searchMap.get("category"));
-            FilterQuery filterQuery=new SimpleFilterQuery(filterCriteria);
+        if (!"".equals(searchMap.get("category"))) {
+            Criteria filterCriteria = new Criteria("item_category").is(searchMap.get("category"));
+            FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
             highlightQuery.addFilterQuery(filterQuery);
         }
         //1.3按品牌筛选
-        if(!"".equals(searchMap.get("brand"))){
-            Criteria filterCriteria=new Criteria("item_brand").is(searchMap.get("brand"));
-            FilterQuery filterQuery=new SimpleFilterQuery(filterCriteria);
+        if (!"".equals(searchMap.get("brand"))) {
+            Criteria filterCriteria = new Criteria("item_brand").is(searchMap.get("brand"));
+            FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
             highlightQuery.addFilterQuery(filterQuery);
         }
         //1.4过滤规格
-        if(searchMap.get("spec")!=null){
-            Map<String,String> specMap= (Map) searchMap.get("spec");
-            for(String key:specMap.keySet() ){
-                Criteria filterCriteria=new Criteria("item_spec_"+key).is( specMap.get(key) );
-                FilterQuery filterQuery=new SimpleFilterQuery(filterCriteria);
+        if (searchMap.get("spec") != null) {
+            Map<String, String> specMap = (Map) searchMap.get("spec");
+            for (String key : specMap.keySet()) {
+                Criteria filterCriteria = new Criteria("item_spec_" + key).is(specMap.get(key));
+                FilterQuery filterQuery = new SimpleFilterQuery(filterCriteria);
                 highlightQuery.addFilterQuery(filterQuery);
             }
         }
