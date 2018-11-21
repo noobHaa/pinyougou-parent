@@ -30,8 +30,10 @@ public class ItemSearchServiceImpl implements ItemSearchService {
     @Override
     public Map<String, Object> search(Map searchMap) {
         //去掉关键字的空格，实现关键字的 或关系查询(例：三星手机 关键字为三星、手机，得到的结果会更多)
-        String keywords = ((String) searchMap.get("keywords")).replace(" ", "");
-        searchMap.put("keywords", keywords);
+        if(searchMap.get("keywords")!=null){
+            String keywords = ((String) searchMap.get("keywords")).replace(" ", "");
+            searchMap.put("keywords", keywords);
+        }
         System.out.println(searchMap.get("keywords"));
         Map<String, Object> map = new HashMap<>();
         //1、列表查询
