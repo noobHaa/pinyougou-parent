@@ -2,6 +2,8 @@ package com.pinyougou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
+import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 import dto.PageResult;
 import dto.Result;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vo.Goods;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,6 +103,7 @@ public class GoodsController {
     public Result delete(Long[] ids) {
         try {
             goodsService.delete(ids);
+            itemSearchService.delItemByGoodsId(Arrays.asList(ids));
             return new Result(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,6 +124,9 @@ public class GoodsController {
         return goodsService.findPage(goods, page, rows);
     }
 
+    @Reference
+    private ItemSearchService itemSearchService;
+
     /**
      * 修改商品的审核状态
      *
@@ -131,6 +138,10 @@ public class GoodsController {
     public Result updateStatus(Long[] ids, String status) {
         try {
             goodsService.updateStatus(ids, status);
+            if (status.equals("1")) {//判断是否是审核成功
+                List<TbItem> itemList = goodsService.findTbItemListByGoodsIdAndStatus(ids, status);
+                itemSearchService.importList(itemList);
+            }
             return new Result(true, "审核成功");
         } catch (Exception e) {
             e.printStackTrace();

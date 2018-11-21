@@ -50,6 +50,21 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         return map;
     }
 
+    @Override
+    public void importList(List itemList) {
+        solrTemplate.saveBeans(itemList);
+        solrTemplate.commit();
+    }
+
+    @Override
+    public void delItemByGoodsId(List ids) {
+        Query query = new SimpleQuery("*:*");
+        Criteria criteria = new Criteria("item_goodsid").in(ids);
+        query.addCriteria(criteria);
+        solrTemplate.delete(query);
+        solrTemplate.commit();
+    }
+
     /**
      * 查询列表
      *
@@ -187,6 +202,5 @@ public class ItemSearchServiceImpl implements ItemSearchService {
             map.put("specList", specList);
         }
         return map;
-
     }
 }

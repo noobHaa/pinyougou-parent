@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import vo.Goods;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -232,5 +233,13 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setIsMarketable(isMarketable);
             goodsMapper.updateByPrimaryKey(goods);
         }
+    }
+
+    @Override
+    public List<TbItem> findTbItemListByGoodsIdAndStatus(Long[] ids, String status) {
+        TbItemExample tbItemExample = new TbItemExample();
+        tbItemExample.createCriteria().andGoodsIdIn(Arrays.asList(ids)).andStatusEqualTo(status);
+        List<TbItem> tbItems = itemMapper.selectByExample(tbItemExample);
+        return tbItems;
     }
 }
