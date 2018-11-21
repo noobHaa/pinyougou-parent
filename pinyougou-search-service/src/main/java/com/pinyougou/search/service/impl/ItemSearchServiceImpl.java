@@ -5,6 +5,7 @@ import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.*;
@@ -28,6 +29,10 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
     @Override
     public Map<String, Object> search(Map searchMap) {
+        //去掉关键字的空格，实现关键字的 或关系查询(例：三星手机 关键字为三星、手机，得到的结果会更多)
+        String keywords = ((String) searchMap.get("keywords")).replace(" ", "");
+        searchMap.put("keywords", keywords);
+        System.out.println(searchMap.get("keywords"));
         Map<String, Object> map = new HashMap<>();
         //1、列表查询
         map.putAll(searchList(searchMap));
@@ -98,6 +103,31 @@ public class ItemSearchServiceImpl implements ItemSearchService {
                 highlightQuery.addFilterQuery(filterQuery);
             }
         }
+        //1.6分页查询
+        Integer pageNo = (Integer) searchMap.get("pageNo");
+        Integer pageSize = (Integer) searchMap.get("pageSize");
+        if (pageNo == null) {
+            pageNo = 1;
+        }
+        if (pageSize == null) {
+            pageSize = 20;
+        }
+        highlightQuery.setOffset((pageNo - 1) * pageSize);//开始查询
+        highlightQuery.setRows(pageSize);
+
+        //1.7排序功能
+        String sort = (String) searchMap.get("sort");
+        String sortField = (String) searchMap.get("sortField");
+        if (sortField != null && sortField != "") {
+            if (sort.equals("DESC")) {
+                Sort orders = new Sort(Sort.Direction.DESC, "item_" + sortField);
+                highlightQuery.addSort(orders);
+            }
+            if (sort.equals("ASC")) {
+                Sort orders = new Sort(Sort.Direction.ASC, "item_" + sortField);
+                highlightQuery.addSort(orders);
+            }
+        }
 
         HighlightPage<TbItem> items = solrTemplate.queryForHighlightPage(highlightQuery, TbItem.class);
 
@@ -109,6 +139,8 @@ public class ItemSearchServiceImpl implements ItemSearchService {
             }
         }
         map.put("rows", items.getContent());
+        map.put("totalPage", items.getTotalPages());
+        map.put("totalNum", items.getTotalElements());
         return map;
     }
 
