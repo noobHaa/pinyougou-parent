@@ -20,7 +20,7 @@ import java.util.Map;
  * @Author ll
  * @Date 2018/11/16 15:08
  */
-@Service
+@Service(timeout = 10000)
 public class ItemSearchServiceImpl implements ItemSearchService {
     @Autowired
     private SolrTemplate solrTemplate;

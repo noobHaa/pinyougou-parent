@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author Administrator
  */
-@Service
+@Service(timeout = 10000)
 public class ContentServiceImpl implements ContentService {
 
     @Autowired

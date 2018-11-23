@@ -1,6 +1,7 @@
 package com.pinyougou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.pinyougou.page.service.ItemPageService;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.service.ItemSearchService;
@@ -138,9 +139,14 @@ public class GoodsController {
     public Result updateStatus(Long[] ids, String status) {
         try {
             goodsService.updateStatus(ids, status);
-            if (status.equals("1")) {//判断是否是审核成功
+            if (status.equals("1")) {//判断是否是审核成功,更新solr
                 List<TbItem> itemList = goodsService.findTbItemListByGoodsIdAndStatus(ids, status);
                 itemSearchService.importList(itemList);
+
+                //生成商品详情
+                for (Long id : ids) {
+                    pageService.genItemHtml(id);
+                }
             }
             return new Result(true, "审核成功");
         } catch (Exception e) {
@@ -148,4 +154,8 @@ public class GoodsController {
             return new Result(false, "审核失败");
         }
     }
+
+    @Reference
+    private ItemPageService pageService;
+
 }

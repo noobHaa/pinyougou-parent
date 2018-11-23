@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author Administrator
  */
-@Service
+@Service(timeout = 10000)
 @Transactional
 public class GoodsServiceImpl implements GoodsService {
 

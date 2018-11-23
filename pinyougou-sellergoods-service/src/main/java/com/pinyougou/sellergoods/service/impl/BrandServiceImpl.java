@@ -19,7 +19,7 @@ import java.util.Map;
  * @Author ll
  * @Date 2018/10/30 11:20
  */
-@Service
+@Service(timeout = 10000)
 @Transactional
 public class BrandServiceImpl implements BrandService {
     @Autowired

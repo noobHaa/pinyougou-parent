@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Administrator
  */
-@Service
+@Service(timeout = 10000)
 @Transactional
 public class SpecificationOptionServiceImpl implements SpecificationOptionService {
 
