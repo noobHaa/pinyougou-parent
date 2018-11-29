@@ -1,20 +1,27 @@
 package com.pinyougou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.page.service.ItemPageService;
+import com.alibaba.fastjson.JSON;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
-import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 import dto.PageResult;
 import dto.Result;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vo.Goods;
 
-import java.util.Arrays;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import java.util.List;
+
+//import com.pinyougou.search.service.ItemSearchService;
 
 /**
  * controller
@@ -94,6 +101,12 @@ public class GoodsController {
         return goodsService.findOne(id);
     }
 
+    @Autowired
+    private Destination queueSolrDeleteDestination;
+
+    @Autowired
+    private Destination topicPageDeleteDestination;
+
     /**
      * 批量删除
      *
@@ -101,10 +114,24 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/delete")
-    public Result delete(Long[] ids) {
+    public Result delete(final Long[] ids) {
         try {
             goodsService.delete(ids);
-            itemSearchService.delItemByGoodsId(Arrays.asList(ids));
+            //itemSearchService.delItemByGoodsId(Arrays.asList(ids));
+            //activeMQ调用  solr删除  页面删除
+            jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    return session.createObjectMessage(ids);
+                }
+            });
+            jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    return session.createObjectMessage(ids);
+                }
+            });
+
             return new Result(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,11 +149,18 @@ public class GoodsController {
      */
     @RequestMapping("/search")
     public PageResult search(@RequestBody TbGoods goods, int page, int rows) {
+        goodsService.findPage(goods, page, rows);
         return goodsService.findPage(goods, page, rows);
     }
 
-    @Reference
-    private ItemSearchService itemSearchService;
+ /*   @Reference
+    private ItemSearchService itemSearchService;*/
+
+    @Autowired
+    private Destination queueSolrDestination;
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
     /**
      * 修改商品的审核状态
@@ -141,11 +175,27 @@ public class GoodsController {
             goodsService.updateStatus(ids, status);
             if (status.equals("1")) {//判断是否是审核成功,更新solr
                 List<TbItem> itemList = goodsService.findTbItemListByGoodsIdAndStatus(ids, status);
-                itemSearchService.importList(itemList);
+                //itemSearchService.importList(itemList);
+
+                //异步调用，activeMQ
+                final String jsonString = JSON.toJSONString(itemList);
+
+                jmsTemplate.send(queueSolrDestination, new MessageCreator() {
+                    @Override
+                    public Message createMessage(Session session) throws JMSException {
+                        return session.createTextMessage(jsonString);
+                    }
+                });
 
                 //生成商品详情
-                for (Long id : ids) {
-                    pageService.genItemHtml(id);
+                for (final Long id : ids) {
+                    //pageService.genItemHtml(id);
+                    jmsTemplate.send(topicPageDestination, new MessageCreator() {
+                        @Override
+                        public Message createMessage(Session session) throws JMSException {
+                            return session.createTextMessage(id + "");
+                        }
+                    });
                 }
             }
             return new Result(true, "审核成功");
@@ -155,7 +205,10 @@ public class GoodsController {
         }
     }
 
-    @Reference
-    private ItemPageService pageService;
+    @Autowired
+    private Destination topicPageDestination;
 
+   /* @Reference
+    private ItemPageService pageService;
+*/
 }

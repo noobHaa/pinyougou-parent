@@ -12,4 +12,12 @@ public interface ItemPageService {
      * @return
      */
     public boolean genItemHtml(Long goodsId);
+
+    /**
+     * 删除静态化页面
+     *
+     * @param goodsId
+     * @return
+     */
+    public boolean deleteItemHtml(Long[] goodsId);
 }

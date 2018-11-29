@@ -9,6 +9,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <context:component-scan base-package="com.pinyougou.page.service.impl"/>
 
     <!-- 事务管理器  -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -39,8 +40,8 @@
     </aop:config>
 
 
-    <bean id="freemarkerConfig"	class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-        <property name="templateLoaderPath" value="/WEB-INF/ftl/" />
-        <property name="defaultEncoding" value="UTF-8" />
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
+        <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 </beans>

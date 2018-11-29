@@ -133,6 +133,7 @@ public class GoodsController {
     public PageResult search(@RequestBody TbGoods goods, int page, int rows) {
         String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
         goods.setSellerId(sellerId);
+        goodsService.findPage(goods, page, rows);
         return goodsService.findPage(goods, page, rows);
     }
 
