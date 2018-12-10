@@ -6,6 +6,7 @@ import com.pinyougou.mapper.TbItemMapper;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojo.TbOrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import vo.Cart;
 
 import java.math.BigDecimal;
@@ -78,6 +79,36 @@ public class CartServiceImpl implements CartService {
         return cartList;
     }
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Override
+    public List<Cart> findCartListFromRedis(String username) {
+        System.out.println("从缓存中查询出购物车");
+        List<Cart> cartList = (List<Cart>) redisTemplate.boundHashOps("cartList").get(username);
+        if (cartList == null) {
+            cartList = new ArrayList();
+        }
+        return cartList;
+    }
+
+    @Override
+    public void saveCartListToRedis(List<Cart> cartList, String username) {
+        System.out.println("将购物车放入缓存中");
+        redisTemplate.boundHashOps("cartList").put(username, cartList);
+    }
+
+    @Override
+    public List<Cart> mergeCartList(List<Cart> cartList1, List<Cart> cartList2) {
+        System.out.println("合并购物车");
+        for (Cart cart : cartList2) {
+            for (TbOrderItem orderItem : cart.getOrderItemList()) {
+                cartList1 = addGoodsToCartList(cartList1, orderItem.getItemId(), orderItem.getNum());
+            }
+        }
+        return cartList1;
+    }
+
     /**
      * 查询总的购物车中是否存在商家购物车
      *
@@ -97,8 +128,8 @@ public class CartServiceImpl implements CartService {
     /**
      * 查询商家购物车中是否存在商品
      *
-     * @param cartList
-     * @param sellerId
+     * @param orderItemList
+     * @param itemId
      * @return
      */
     private TbOrderItem searchOrderItemByItemId(List<TbOrderItem> orderItemList, Long itemId) {
