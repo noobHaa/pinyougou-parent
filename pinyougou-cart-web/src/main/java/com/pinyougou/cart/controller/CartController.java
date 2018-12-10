@@ -7,6 +7,7 @@ import com.pinyougou.util.CookieUtil;
 import dto.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vo.Cart;
@@ -69,7 +70,12 @@ public class CartController {
      * @return
      */
     @RequestMapping("addGoodsToCartList")
+    @CrossOrigin(origins = "http://localhost:9105", allowCredentials = "true")
     public Result addGoodsToCartList(Long itemId, Integer num) {
+      /*  //允许源访问   使用@CrossOrgin注解
+        response.addHeader("Access-Control-Allow-Origin", "http://localhost:9105");
+        //使用cookie时必须有这句话
+        response.addHeader("Access-Control-Allow-Credentials", "true");*/
         try {
             List<Cart> cartList = findCartList();
             List<Cart> carts = cartService.addGoodsToCartList(cartList, itemId, num);
