@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.*;
 import java.util.Date;
@@ -28,7 +29,8 @@ import java.util.Map;
  *
  * @author Administrator
  */
-@Service
+@Service(timeout = 10000)
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
