@@ -18,9 +18,14 @@ app.service("cartService", function ($http) {
             }
         }
         return totalValue;
-    }
+    };
     //查询所有的收货地址
     this.findAddressList = function () {
         return $http.get("address/findListByLoginUser.do");
+    };
+
+    //结算
+    this.submitOrder = function (order) {
+        return $http.post("order/add.do", order);
     }
 });
