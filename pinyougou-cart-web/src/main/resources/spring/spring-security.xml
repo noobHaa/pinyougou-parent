@@ -11,6 +11,8 @@
     <http pattern="/img/**" security="none"/>
     <http pattern="/js/**" security="none"/>
     <http pattern="/plugins/**" security="none"/>
+    <http pattern="/pay/*.do" security="none"/>
+    <http pattern="/pay.html" security="none"/>
     <!--<http pattern="/cart/*.do" security="none"/>-->
 
     <http use-expressions="false" entry-point-ref="casProcessingFilterEntryPoint">
