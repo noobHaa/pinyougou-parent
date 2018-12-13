@@ -1,8 +1,10 @@
 package com.pinyougou.order.service;
 
 import com.pinyougou.pojo.TbOrder;
+import com.pinyougou.pojo.TbPayLog;
 import dto.PageResult;
 
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.List;
 
 /**
@@ -65,4 +67,19 @@ public interface OrderService {
      */
     public PageResult findPage(TbOrder order, int pageNum, int pageSize);
 
+    /**
+     * 查询缓存中的支付日志
+     *
+     * @param userId
+     * @return
+     */
+    public TbPayLog searchPayLogFromRedis(String userId);
+
+
+    /**
+     * 修改订单和支付日志的支付状态
+     *
+     * @param out_trade_no
+     */
+    public void updateOrderStatus(String out_trade_no, String transaction_id);
 }
