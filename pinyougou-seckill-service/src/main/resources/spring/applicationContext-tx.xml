@@ -39,4 +39,8 @@
                      pointcut="execution(* com.pinyougou.seckill.service.*.*(..))"/>
     </aop:config>
 
+    <bean id="idWorker" class="com.pinyougou.util.IdWorker">
+        <constructor-arg index="0" value="0"/>
+        <constructor-arg index="1" value="3"/>
+    </bean>
 </beans>

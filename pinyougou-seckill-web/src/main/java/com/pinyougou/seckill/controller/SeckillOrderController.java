@@ -5,6 +5,7 @@ import com.pinyougou.pojo.TbSeckillOrder;
 import com.pinyougou.seckill.service.SeckillOrderService;
 import dto.PageResult;
 import dto.Result;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -119,4 +120,24 @@ public class SeckillOrderController {
         return seckillOrderService.findPage(seckillOrder, page, rows);
     }
 
+    /**
+     * 抢购
+     *
+     * @param seckillId
+     * @return
+     */
+    @RequestMapping("/submitOrder")
+    public Result submitOrder(Long seckillId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username.equals("anonymousUser")) {//用户未登录
+            return new Result(false, "用户未登录");
+        }
+        try {
+            seckillOrderService.submitOrder(seckillId, username);
+            return new Result(true, "抢购成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "抢购失败");
+        }
+    }
 }
