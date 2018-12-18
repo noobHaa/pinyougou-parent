@@ -150,13 +150,6 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         if (seckillGoods.getStockCount() == 0) {
             redisTemplate.boundHashOps("seckillGoods").delete(seckillId);
             seckillGoodsMapper.updateByPrimaryKey(seckillGoods);
-
-            List<TbSeckillOrder> seckillOrders = redisTemplate.boundHashOps("seckillOrders").values();
-            for (TbSeckillOrder seckillOrder : seckillOrders) {
-                if (seckillOrder != null) {
-                    seckillOrderMapper.insert(seckillOrder);
-                }
-            }
         }
         //4生成订单对象，存放到redis
         TbSeckillOrder seckillOrder = new TbSeckillOrder();
@@ -169,6 +162,45 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         seckillOrder.setUserId(userId);//用户
 
         redisTemplate.boundHashOps("seckillOrders").put(userId, seckillOrder);
+    }
+
+    @Override
+    public TbSeckillOrder searchOrderFromRedisByUserId(String name) {
+        return (TbSeckillOrder) redisTemplate.boundHashOps("seckillOrders").get(name);
+    }
+
+    @Override
+    public void saveOrderFromRedisToDb(String name, String out_trade_no, String transaction_id) {
+        //1取出订单
+        TbSeckillOrder seckillOrder = searchOrderFromRedisByUserId(name);
+        //2保存订单
+        if (seckillOrder == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (seckillOrder.getId().longValue() != Long.valueOf(out_trade_no)) {
+            throw new RuntimeException("订单号不符");
+        }
+        seckillOrder.setTransactionId(transaction_id);//交易流水号
+        seckillOrder.setPayTime(new Date());//支付时间
+        seckillOrder.setStatus("1");//状态
+        seckillOrderMapper.insert(seckillOrder);//保存到数据库
+        //3清除缓存
+        redisTemplate.boundHashOps("seckillOrders").delete(name);
+    }
+
+    @Override
+    public void deleteOrderFromRedis(String name, String out_trade_no) {
+        //1清除缓存中的订单
+        TbSeckillOrder seckillOrder = searchOrderFromRedisByUserId(name);
+        if (seckillOrder != null && seckillOrder.getId().longValue() != Long.valueOf(out_trade_no)) {
+            redisTemplate.boundHashOps("seckillOrders").delete(name);
+            //2退还数量
+            TbSeckillGoods seckillGoods = (TbSeckillGoods) redisTemplate.boundHashOps("seckillGoods").get(seckillOrder.getSeckillId());
+            if (seckillGoods != null) {
+                seckillGoods.setStockCount(seckillGoods.getStockCount() + 1);
+                redisTemplate.boundHashOps("seckillGoods").put(seckillOrder.getSeckillId(), seckillGoods);
+            }
+        }
     }
 
 }

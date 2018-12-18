@@ -1,5 +1,6 @@
 package com.pinyougou.seckill.service;
 
+import com.pinyougou.pojo.TbPayLog;
 import com.pinyougou.pojo.TbSeckillOrder;
 import dto.PageResult;
 
@@ -73,4 +74,27 @@ public interface SeckillOrderService {
      */
     public void submitOrder(Long seckillId, String userId);
 
+    /**
+     * 查询缓存中的查询
+     *
+     * @param name
+     * @return
+     */
+    public TbSeckillOrder searchOrderFromRedisByUserId(String name);
+
+    /**
+     * 支付成功，保存订单
+     *
+     * @param out_trade_no
+     * @param transaction_id
+     */
+    public void saveOrderFromRedisToDb(String name, String out_trade_no, String transaction_id);
+
+    /**
+     * 取消订单
+     *
+     * @param name
+     * @param out_trade_no
+     */
+    public void deleteOrderFromRedis(String name, String out_trade_no);
 }
