@@ -149,7 +149,6 @@ public class GoodsController {
      */
     @RequestMapping("/search")
     public PageResult search(@RequestBody TbGoods goods, int page, int rows) {
-        goodsService.findPage(goods, page, rows);
         return goodsService.findPage(goods, page, rows);
     }
 
