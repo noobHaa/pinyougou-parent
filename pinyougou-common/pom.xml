@@ -12,6 +12,27 @@
     <artifactId>pinyougou-common</artifactId>
     <packaging>jar</packaging>
 
+    <!--默认配置-->
+    <properties>
+        <env>dev</env>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <!--配置mavenProfile-->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>pro</id>
+            <properties>
+                <env>pro</env>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!-- 文件上传组件 -->
         <dependency>
@@ -37,4 +58,16 @@
             <artifactId>httpclient</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <filters>
+            <filter>src/main/resources/filter/dubbox_${env}.properties</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
