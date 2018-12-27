@@ -26,8 +26,7 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                classpath:spring/springmvc.xml,
-                classpath*:spring/applicationContext*.xml
+                classpath:spring/springmvc.xml
             </param-value>
         </init-param>
     </servlet>
@@ -35,6 +34,19 @@
         <servlet-name>springmvc</servlet-name>
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
+
+    <!--配置过滤器-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:spring/applicationContext*.xml
+        </param-value>
+    </context-param>
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
 
     <welcome-file-list>
         <welcome-file>search.html</welcome-file>
